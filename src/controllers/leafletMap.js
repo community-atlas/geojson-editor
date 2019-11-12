@@ -21,7 +21,33 @@ let drawnItems = null
 let map = null
 
 export function createMap () {
-  map = L.map('map').setView([0, 0], 2)
+
+  function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+  
+  // A hack to quickly look for starting location 
+  // @todo: Use VUE routes
+ 
+  let vars = getUrlVars();   
+  let lat = vars.lat || 0;
+  let lng = vars.lng || 0;
+  let zoom = vars.zoom || 2;
+
+  let start = {
+    'palermo' : {
+      lat: 38,
+      lng: 13,
+      zoom: 12,
+    }
+  }
+
+    
+  map = L.map('map').setView([lat, lng], zoom)
 
   const tiles = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -105,3 +131,4 @@ export function modifyGeoJSON (newGeoJSON) {
     layer.on('click', openPopup)
   })
 }
+
