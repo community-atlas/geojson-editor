@@ -38,15 +38,7 @@ export function createMap () {
   let lng = vars.lng || 0;
   let zoom = vars.zoom || 2;
 
-  let start = {
-    'palermo' : {
-      lat: 38,
-      lng: 13,
-      zoom: 12,
-    }
-  }
-
-    
+     
   map = L.map('map').setView([lat, lng], zoom)
 
   const tiles = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {

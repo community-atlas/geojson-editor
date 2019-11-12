@@ -1,6 +1,5 @@
 <template>
   <Row class="topMenu">
-    Community Atlas Geometry
     <Dropdown placement="bottom-start" @on-click="handleFixClick">
       <a href="javascript:void(0)">
         <Button class="topBtn">
