@@ -1,9 +1,5 @@
 <template>
   <Row id="bottomMenu">
-    <Button class="pad" @click="copy">
-      Copy to clipboard
-    </Button>
-
     <ButtonGroup>
       <Button @click="saveToGeojson">
         Save as geojson
