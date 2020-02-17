@@ -1,124 +1,107 @@
 <template>
   <Row id="bottomMenu">
     <ButtonGroup>
-      <Button @click="saveToGeojson">
-        Save as geojson
-      </Button>
-      <Dropdown trigger="click" placement="top-end" @on-click="saveInFormats">
-        <a href="javascript:void(0)">
-          <Button icon="arrow-up-b" />
-        </a>
-        <DropdownMenu slot="list">
-          <DropdownItem v-for="format in supportedFormats" :key="format.value" :name="format.value">
-            {{ format.label }}
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+      <Button @click="saveToGeojson">Save</Button>
     </ButtonGroup>
   </Row>
 </template>
 
 <script>
-import FileSaver from 'file-saver'
-import { topology } from 'topojson-server'
-import wkt from 'wellknown'
-import shape from 'shp-write'
+import FileSaver from "file-saver";
+import { topology } from "topojson-server";
+import wkt from "wellknown";
+import shape from "shp-write";
 
 export default {
-  name: 'BottomMenu',
-  data () {
+  name: "BottomMenu",
+  data() {
     return {
-      supportedFormats: [{
-        label: 'Shapefile',
-        value: 'shp'
-      },
-      {
-        label: 'TopoJSON',
-        value: 'topojson'
-      },
-      {
-        label: 'WKT',
-        value: 'wkt'
-      }
+      supportedFormats: [
+        {
+          label: "Shapefile",
+          value: "shp"
+        },
+        {
+          label: "TopoJSON",
+          value: "topojson"
+        },
+        {
+          label: "WKT",
+          value: "wkt"
+        }
       ]
-    }
+    };
   },
   methods: {
-    copy: function () {
-      const el = document.createElement('textarea');
+    copy: function() {
+      const el = document.createElement("textarea");
       el.value = this.$store.state.geojson;
       document.body.appendChild(el);
       el.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(el);
 
       this.$Notice.open({
-        title: 'Copied to clipboard',
-        duration: 2.5,
-      })
-
-    },
-    saveToGeojson: function () {
-      var file = new File([this.code], "exported.geojson", {
-        type: "text/plain;charset=utf-8"
+        title: "Copied to clipboard",
+        duration: 2.5
       });
-      FileSaver.saveAs(file);
     },
-    saveInFormats: function (e) {
-      let outData = null
-      let outName = e
-      if (e === 'topo') {
-        outData = topojson.topology(this.$store.state.geojsonString)
-      }
-      if (e === 'wkt') {
-        outData = wkt.stringify({
-          type: 'GeometryCollection',
-          geometries: this.$store.getters.geojson.features.map(function (f) {
-            return f.geometry
-          })
-        })
-      }
-      if (e == 'shp') {
-        var options = {
-            folder: 'myshapes',
-            types: {
-                point: 'mypoints',
-                polygon: 'mypolygons',
-                line: 'mylines'
-            }
-        }
-        shape.download(this.$store.getters.geojson, options)
-        return
+    saveToGeojson: function() {
+      function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(
+          /[?&]+([^=&]+)=([^&]*)/gi,
+          function(m, key, value) {
+            vars[key] = value;
+          }
+        );
+        return vars;
       }
 
-      var file = new File([JSON.stringify(outData)], `export.${outName}`, {
-        type: "text/plain;charset=utf-8"
+      // A hack to quickly look for starting location
+      // @todo: Use VUE routes
+
+      let vars = getUrlVars();
+      let docId = vars.docId || 0;
+      let featureId = vars.featureId || 0;      
+
+      let url = `https://node-red.community-atlas.net/complex/${docId}/${featureId}`;
+      fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        headers: {
+          "Content-Type": "application/json"
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *client
+        body: this.$store.state.geojsonString // body data type must match "Content-Type" header
       });
-      FileSaver.saveAs(file);
     }
   }
-}
+};
 </script>
 
 <style>
-#bottomMenu{
+#bottomMenu {
   position: absolute;
   height: 50px;
   bottom: 0px;
   padding: 10px;
-  background: #F3F3F3;
+  background: #f3f3f3;
   width: 100%;
   text-align: right;
   z-index: 1000;
 }
-.pad{
+.pad {
   margin-right: 10px;
 }
 .ivu-notice {
-  top: calc(100vh - 115px)!important;
+  top: calc(100vh - 115px) !important;
   width: 200px;
 }
-.ivu-notice-with-normal:after{
-  background: #BFC0C0;
+.ivu-notice-with-normal:after {
+  background: #bfc0c0;
 }
 </style>
