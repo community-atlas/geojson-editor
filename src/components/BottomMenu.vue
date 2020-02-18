@@ -78,6 +78,12 @@ export default {
         referrerPolicy: "no-referrer", // no-referrer, *client
         body: this.$store.state.geojsonString // body data type must match "Content-Type" header
       });
+
+      this.$store.commit('setGeoJSON', {
+        "type": "FeatureCollection",
+        "features": []
+      })
+
     }
   }
 };
