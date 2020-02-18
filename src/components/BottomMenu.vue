@@ -63,7 +63,7 @@ export default {
 
       let vars = getUrlVars();
       let docId = vars.docId || 0;
-      let featureId = vars.featureId || 0;      
+      let featureId = encodeURIComponent(vars.featureId) || 0;      
 
       let url = `https://node-red.community-atlas.net/complex/${docId}/${featureId}`;
       fetch(url, {
